@@ -1,0 +1,408 @@
+:root {
+    --primary: #4f46e5;      /* Синій */
+    --primary-hover: #4338ca;
+    --success: #22c55e;      /* Зелений */
+    --danger: #ef4444;       /* Червоний */
+    --bg: #f8fafc;           /* Світлий фон */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.5;
+}
+
+nav {
+    background: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 1.5rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+.auth-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-card h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+input, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.submit-btn, .auth-btn, #add-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover, .auth-btn:hover, #add-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 70px;
+    padding: 20px 0;
+}
+
+.book-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.book-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.book-card p {
+    color: var(--text-muted);
+    margin: 0.25rem 0;
+}
+
+.status-container {
+    margin: 1rem 0;
+}
+
+select.status-reading { border-left: 4px solid #f59e0b; }
+select.status-finished { border-left: 4px solid #10b981; }
+
+.delete-btn {
+    background-color: #fee2e2;
+    color: var(--danger);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.delete-btn:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+#confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-box, .alert-error {
+    background-color: #ff7675;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    animation: slideDown 0.4s ease-out;
+}
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.btn-ok {
+    background-color: #00d2d3;
+    color: white;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background-color: #dcdde1;
+    color: #2f3640;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.confirm-btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
+}
+.modal-content {
+    background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px;
+    position: relative; max-height: 80vh; overflow-y: auto;
+}
+.close-btn { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; }
+.modal-content label { display: block; margin-top: 15px; font-weight: bold; }
+.modal-content input, .modal-content textarea, .modal-content select {
+    width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;
+}
+.save-btn { background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.85em;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-in-plan { background-color: #6c757d; } /* Сірий */
+.status-reading { background-color: #007bff; } /* Синій */
+.status-finished { background-color: #28a745; } /* Зелений */
+
+.info-line {
+    color: #444;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.card-img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+.no-img {
+    height: 350px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-content h3 {
+    margin: 0 0 2px 0;
+    font-size: 1.2rem;
+    color: #2d3436;
+}
+
+.nav-links a[href="/admin/users"] {
+    border: 1px solid #00d2d3;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.nav-links a[href="/admin/users"]:hover {
+    background: #00d2d3;
+    color: #fff !important;
+}
+.lockout-msg {
+    background: #fab1a0;
+    border-left: 5px solid #d63031;
+    color: #2d3436;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Стиль для модального вікна блокування */
+.lockout-modal {
+    display: none; /* Спочатку приховано */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.lockout-content {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 400px;
+    text-align: center;
+    border-bottom: 8px solid #ff7675; /* Червона лінія знизу */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    animation: slideIn 0.4s ease-out;
+}
+
+.lockout-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.lockout-title {
+    color: #2d3436;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.lockout-text {
+    color: #636e72;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.lockout-btn {
+    background: #ff7675;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.lockout-btn:hover {
+    background: #d63031;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
