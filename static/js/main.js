@@ -229,34 +229,5 @@ async function addBook() {
     }
 }
 
-async function registerUser() {
-    const username = document.getElementById('reg-username').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const confirm = document.getElementById('reg-confirm').value;
-
-    if (!email.endsWith('@gmail.com')) {
-        alert("Please use a valid @gmail.com address.");
-        return;
-    }
-
-    const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            username,
-            email,
-            password,
-            confirm_password: confirm
-        })
-    });
-
-    const data = await response.json();
-    if (data.success) {
-        window.location.href = '/';
-    } else {
-        alert(data.message);
-    }
-}
 
 document.addEventListener("DOMContentLoaded", loadBooks);
