@@ -29,12 +29,6 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://",
-)
 
 handler = RotatingFileHandler('security.log', maxBytes=10000, backupCount=3)
 handler.setLevel(logging.INFO)
@@ -300,4 +294,4 @@ def modify_book(id):
 
 if __name__ == '__main__':
     with app.app_context(): db.create_all()
-    app.run(debug=True, ssl_context='adhoc', port=5001)
+    app.run(debug=True, ssl_context='adhoc', port=5000)
