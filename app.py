@@ -54,16 +54,20 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=db.func.now())
 
 
+# MEDIA_TYPE: 'book' | 'movie' | 'series' | 'anime'
 class Book(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    author = db.Column(db.String(200))
+    author = db.Column(db.String(200))          # author / director / studio
     status = db.Column(db.String(50), default='In plan')
     image_url = db.Column(db.String(500), default='')
     description = db.Column(db.Text, default='')
-    current_page = db.Column(db.Integer, default=0)
+    current_page = db.Column(db.Integer, default=0)   # page / episode / episode
     rating = db.Column(db.Integer, default=0)
+    media_type = db.Column(db.String(20), default='book')  # NEW FIELD
+    # For series/anime: track current season
+    current_season = db.Column(db.Integer, default=1)       # NEW FIELD
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
@@ -84,8 +88,6 @@ def admin_required(f):
 def api_admin_panel():
     users = User.query.all()
     return render_template('admin.html', users=users)
-
-
 
 
 local_tz = pytz.timezone('Europe/Warsaw')
@@ -230,6 +232,10 @@ def api_logout():
     return redirect(url_for('index'))
 
 
+# ── Media endpoints ────────────────────────────────────────────────────────────
+# GET  /api/books?type=book|movie|series|anime  → filtered list
+# POST /api/books                               → create (media_type in body)
+
 @app.route('/api/books', methods=['GET', 'POST'])
 @login_required
 def handle_books():
@@ -246,19 +252,23 @@ def handle_books():
                 description='',
                 image_url='',
                 current_page=0,
-                rating=0
+                current_season=1,
+                rating=0,
+                media_type=data.get('media_type', 'book'),
             )
             db.session.add(new_book)
             db.session.commit()
-            return jsonify({'id': new_book.id, 'message': 'Book added!'}), 201
+            return jsonify({'id': new_book.id, 'message': 'Item added!'}), 201
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-    books = Book.query.filter_by(user_id=current_user.id).all()
+    media_type = request.args.get('type', 'book')
+    books = Book.query.filter_by(user_id=current_user.id, media_type=media_type).all()
     return jsonify([{
         'id': b.id, 'title': b.title, 'author': b.author, 'status': b.status,
         'image_url': b.image_url, 'description': b.description,
-        'current_page': b.current_page, 'rating': b.rating
+        'current_page': b.current_page, 'current_season': b.current_season,
+        'rating': b.rating, 'media_type': b.media_type
     } for b in books])
 
 
@@ -273,7 +283,8 @@ def modify_book(id):
         return jsonify({
             'id': book.id, 'title': book.title, 'author': book.author, 'status': book.status,
             'image_url': book.image_url, 'description': book.description,
-            'current_page': book.current_page, 'rating': book.rating
+            'current_page': book.current_page, 'current_season': book.current_season,
+            'rating': book.rating, 'media_type': book.media_type
         })
 
     if request.method == 'DELETE':
@@ -286,6 +297,7 @@ def modify_book(id):
     book.image_url = data.get('image_url', book.image_url)
     book.description = data.get('description', book.description)
     book.current_page = data.get('current_page', book.current_page)
+    book.current_season = data.get('current_season', book.current_season)
     book.rating = data.get('rating', book.rating)
 
     db.session.commit()
