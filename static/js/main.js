@@ -30,16 +30,16 @@ function updateAddForm(tab) {
     const titleInput = document.getElementById('book-title');
 
     const labels = {
-        book:   { title: 'Book Title',   author: 'Author Name',         header: 'Add a New Book' },
-        movie:  { title: 'Movie Title',  author: 'Director Name',       header: 'Add a New Movie' },
-        series: { title: 'Series Title', author: 'Studio / Creator',    header: 'Add a New Series' },
-        anime:  { title: 'Anime Title',  author: 'Studio Name',         header: 'Add a New Anime' },
+        book: {title: 'Book Title', author: 'Author Name', header: 'Add a New Book'},
+        movie: {title: 'Movie Title', author: 'Director Name', header: 'Add a New Movie'},
+        series: {title: 'Series Title', author: 'Studio / Creator', header: 'Add a New Series'},
+        anime: {title: 'Anime Title', author: 'Studio Name', header: 'Add a New Anime'},
     };
 
     const l = labels[tab] || labels.book;
-    if (titleInput)  titleInput.placeholder = l.title;
+    if (titleInput) titleInput.placeholder = l.title;
     if (authorInput) authorInput.placeholder = l.author;
-    if (mainHeader)  mainHeader.textContent = l.header;
+    if (mainHeader) mainHeader.textContent = l.header;
 }
 
 // 🟢 Load list ------------------------------------------------------------------
@@ -69,7 +69,7 @@ function filterCollection() {
     // Відфільтровуємо збережену колекцію
     const filteredBooks = currentCollectionData.filter(book => {
         const matchesSearch = book.title.toLowerCase().includes(searchQuery) ||
-                              (book.author && book.author.toLowerCase().includes(searchQuery));
+            (book.author && book.author.toLowerCase().includes(searchQuery));
 
         let matchesStatus = true;
         if (statusFilter !== 'all') {
@@ -85,10 +85,10 @@ function filterCollection() {
     // Якщо нічого не знайдено з такими фільтрами
     if (filteredBooks.length === 0) {
         const emptyLabels = {
-            book:   'No books found.',
-            movie:  'No movies found.',
+            book: 'No books found.',
+            movie: 'No movies found.',
             series: 'No series found.',
-            anime:  'No anime found.',
+            anime: 'No anime found.',
         };
         list.innerHTML = `<p style="text-align:center; color: #888; width: 100%; margin-top: 15px;">${searchQuery || statusFilter !== 'all' ? 'No items match your filters.' : emptyLabels[currentTab]}</p>`;
         return;
@@ -124,22 +124,33 @@ function filterCollection() {
 
         const statusClass = book.status.replace(/\s+/g, '-').toLowerCase();
 
+// Тепер створюємо словник кольорів
+        const statusColors = {
+            'in-plan': '#7f8c8d', // Сірий
+            'reading': '#2ecc71', // Зелений
+            'watching': '#2ecc71', // Зелений для відео
+            'finished': '#9b59b6'  // Фіолетовий
+        };
+        const currentBadgeColor = statusColors[statusClass] || '#007bff'; // Синій за замовчуванням
+
+// І тепер рендеримо саму картку
         card.innerHTML = `
-            ${book.image_url ? `<img src="${book.image_url}" class="card-img">` : '<div class="no-img">No Cover</div>'}
-            <div class="card-content">
-                <h3>${book.title}</h3>
-                <p class="author">${book.author}</p>
-                <div class="status-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%;">
-                    <span class="status-badge status-${statusClass}" style="background-color: #007bff; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
-                        ${book.status}
-                    </span>
-                    <div class="extra-info-container">${extraInfo}</div>
-                </div>
-            </div>
-        `;
+    ${book.image_url ? `<img src="${book.image_url}" class="card-img">` : '<div class="no-img">No Cover</div>'}
+    <div class="card-content">
+        <h3>${book.title}</h3>
+        <p class="author">${book.author}</p>
+        <div class="status-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%;">
+            <span class="status-badge status-${statusClass}" style="background-color: ${currentBadgeColor}; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
+                ${book.status}
+            </span>
+            <div class="extra-info-container">${extraInfo}</div>
+        </div>
+    </div>
+`;
         list.appendChild(card);
     });
 }
+
 // 🟢 Open details modal ---------------------------------------------------------
 async function openBookDetails(id) {
     const res = await fetch(`/api/books/${id}`);
@@ -147,12 +158,12 @@ async function openBookDetails(id) {
     const tab = book.media_type || 'book';
 
     const modal = document.getElementById('book-modal');
-    const body  = document.getElementById('modal-body');
+    const body = document.getElementById('modal-body');
 
     const isMedia = (tab === 'movie' || tab === 'series' || tab === 'anime');
     const statusOptions = isMedia
         ? ['In plan', 'Watching', 'Finished']
-        : ['In plan', 'Reading',  'Finished'];
+        : ['In plan', 'Reading', 'Finished'];
     const currentStatus = book.status;
 
     const statusHTML = statusOptions.map(s =>
@@ -173,7 +184,7 @@ async function openBookDetails(id) {
 
     const watchingStatus = isMedia ? 'Watching' : 'Reading';
     const showProgress = currentStatus === watchingStatus;
-    const showSeason   = (tab === 'series' || tab === 'anime') && showProgress;
+    const showSeason = (tab === 'series' || tab === 'anime') && showProgress;
 
     body.innerHTML = `
         <h2>${book.title}</h2>
@@ -229,13 +240,13 @@ function toggleFields(status, tab) {
     const isWatching = status === watchingStatus;
     const isFinished = status === 'Finished';
 
-    const pageField   = document.getElementById('page-field');
+    const pageField = document.getElementById('page-field');
     const ratingField = document.getElementById('rating-field');
     const seasonField = document.getElementById('season-field');
-    const labelField  = document.getElementById('dynamic-progress-label');
+    const labelField = document.getElementById('dynamic-progress-label');
 
-    if (pageField)   pageField.style.display   = isWatching ? 'block' : 'none';
-    if (ratingField) ratingField.style.display = isFinished  ? 'block' : 'none';
+    if (pageField) pageField.style.display = isWatching ? 'block' : 'none';
+    if (ratingField) ratingField.style.display = isFinished ? 'block' : 'none';
     if (seasonField) seasonField.style.display = (isWatching && (tab === 'series' || tab === 'anime')) ? 'block' : 'none';
 
     // Динамічно змінюємо текст лейблу при зміні статусів у відкритому модальному вікні
@@ -250,17 +261,17 @@ function toggleFields(status, tab) {
 async function saveDetails(id, tab) {
     const seasonEl = document.getElementById('edit-season');
     const data = {
-        image_url:      document.getElementById('edit-image').value,
-        description:    document.getElementById('edit-desc').value,
-        status:         document.getElementById('edit-status').value,
-        current_page:   document.getElementById('edit-page')?.value   || 0,
-        rating:         document.getElementById('edit-rating')?.value || 0,
+        image_url: document.getElementById('edit-image').value,
+        description: document.getElementById('edit-desc').value,
+        status: document.getElementById('edit-status').value,
+        current_page: document.getElementById('edit-page')?.value || 0,
+        rating: document.getElementById('edit-rating')?.value || 0,
         current_season: seasonEl ? (seasonEl.value || 1) : 1,
     };
 
     await fetch(`/api/books/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     });
 
@@ -281,7 +292,9 @@ async function updateStatus(id, newStatus) {
             body: JSON.stringify({status: newStatus})
         });
         if (response.status === 401) window.location.href = '/api/auth/login';
-    } catch (error) { console.error("Update error:", error); }
+    } catch (error) {
+        console.error("Update error:", error);
+    }
 }
 
 // 🟢 Delete ---------------------------------------------------------------------
@@ -292,11 +305,11 @@ async function deleteBook(id) {
     const confirmModal = document.getElementById('confirm-modal');
     confirmModal.style.display = 'flex';
 
-    document.getElementById('confirm-ok-btn').onclick = async function() {
+    document.getElementById('confirm-ok-btn').onclick = async function () {
         try {
             const response = await fetch(`/api/books/${bookToDelete}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             });
 
             if (response.ok) {
@@ -322,7 +335,7 @@ function closeConfirm() {
 // 🟢 Flash message --------------------------------------------------------------
 function showFlashMessage(text, type) {
     const container = document.getElementById('alert-container');
-    const alertDiv  = document.createElement('div');
+    const alertDiv = document.createElement('div');
 
     alertDiv.style.cssText = `
         background-color: #ff7675; 
@@ -346,10 +359,10 @@ function showFlashMessage(text, type) {
 
 // 🟢 Add item -------------------------------------------------------------------
 async function addBook() {
-    const titleEl  = document.getElementById('book-title');
+    const titleEl = document.getElementById('book-title');
     const authorEl = document.getElementById('book-author');
 
-    const title  = titleEl.value.trim();
+    const title = titleEl.value.trim();
     const author = authorEl.value.trim();
 
     if (!title) {
@@ -360,10 +373,10 @@ async function addBook() {
     try {
         const response = await fetch('/api/books', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                title:      title,
-                author:     author,
+                title: title,
+                author: author,
                 media_type: currentTab,   // send current tab as media_type
             })
         });
@@ -374,7 +387,7 @@ async function addBook() {
         }
 
         if (response.ok) {
-            titleEl.value  = '';
+            titleEl.value = '';
             authorEl.value = '';
             loadBooks();
         } else {
