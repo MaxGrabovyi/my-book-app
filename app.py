@@ -54,20 +54,18 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=db.func.now())
 
 
-# MEDIA_TYPE: 'book' | 'movie' | 'series' | 'anime'
 class Book(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    author = db.Column(db.String(200))          # author / director / studio
+    author = db.Column(db.String(200))
     status = db.Column(db.String(50), default='In plan')
     image_url = db.Column(db.String(500), default='')
     description = db.Column(db.Text, default='')
-    current_page = db.Column(db.Integer, default=0)   # page / episode / episode
+    current_page = db.Column(db.Integer, default=0)
     rating = db.Column(db.Integer, default=0)
-    media_type = db.Column(db.String(20), default='book')  # NEW FIELD
-    # For series/anime: track current season
-    current_season = db.Column(db.Integer, default=1)       # NEW FIELD
+    media_type = db.Column(db.String(20), default='book')
+    current_season = db.Column(db.Integer, default=1)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
@@ -231,10 +229,6 @@ def api_logout():
     logout_user()
     return redirect(url_for('index'))
 
-
-# ── Media endpoints ────────────────────────────────────────────────────────────
-# GET  /api/books?type=book|movie|series|anime  → filtered list
-# POST /api/books                               → create (media_type in body)
 
 @app.route('/api/books', methods=['GET', 'POST'])
 @login_required

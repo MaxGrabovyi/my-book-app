@@ -6,21 +6,17 @@ let currentCollectionData = []; // Глобальний масив для збе
 function switchTab(tab) {
     currentTab = tab;
 
-    // Скидаємо значення пошуку та фільтру при переході на іншу вкладку
     const searchInput = document.getElementById('search-input');
     const statusFilter = document.getElementById('status-filter');
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = 'all';
 
-    // Update active tab style
     document.querySelectorAll('.media-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
     });
 
-    // Update add-form labels
     updateAddForm(tab);
 
-    // Reload list for this tab
     loadBooks();
 }
 
@@ -48,7 +44,6 @@ async function loadBooks() {
         const response = await fetch(`/api/books?type=${currentTab}`);
         if (response.status === 401) return;
 
-        // Зберігаємо завантажені дані у масив і викликаємо локальний рендеринг з фільтрацією
         currentCollectionData = await response.json();
         filterCollection();
 
@@ -57,7 +52,6 @@ async function loadBooks() {
     }
 }
 
-// 🟢 Живий фільтр та рендеринг карток -------------------------------------------
 function filterCollection() {
     const list = document.getElementById('book-list');
     if (!list) return;
@@ -66,7 +60,6 @@ function filterCollection() {
     const searchQuery = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
     const statusFilter = document.getElementById('status-filter')?.value || 'all';
 
-    // Відфільтровуємо збережену колекцію
     const filteredBooks = currentCollectionData.filter(book => {
         const matchesSearch = book.title.toLowerCase().includes(searchQuery) ||
             (book.author && book.author.toLowerCase().includes(searchQuery));
@@ -82,7 +75,6 @@ function filterCollection() {
         return matchesSearch && matchesStatus;
     });
 
-    // Якщо нічого не знайдено з такими фільтрами
     if (filteredBooks.length === 0) {
         const emptyLabels = {
             book: 'No books found.',
@@ -94,7 +86,6 @@ function filterCollection() {
         return;
     }
 
-    // Створюємо картки
     filteredBooks.forEach(book => {
         const card = document.createElement('div');
         card.className = 'book-card';
@@ -124,16 +115,14 @@ function filterCollection() {
 
         const statusClass = book.status.replace(/\s+/g, '-').toLowerCase();
 
-// Тепер створюємо словник кольорів
         const statusColors = {
-            'in-plan': '#7f8c8d', // Сірий
-            'reading': '#2ecc71', // Зелений
-            'watching': '#2ecc71', // Зелений для відео
-            'finished': '#9b59b6'  // Фіолетовий
+            'in-plan': '#7f8c8d',
+            'reading': '#2ecc71',
+            'watching': '#2ecc71',
+            'finished': '#9b59b6'
         };
-        const currentBadgeColor = statusColors[statusClass] || '#007bff'; // Синій за замовчуванням
+        const currentBadgeColor = statusColors[statusClass] || '#007bff';
 
-// І тепер рендеримо саму картку
         card.innerHTML = `
     ${book.image_url ? `<img src="${book.image_url}" class="card-img">` : '<div class="no-img">No Cover</div>'}
     <div class="card-content">
@@ -170,7 +159,6 @@ async function openBookDetails(id) {
         `<option value="${s}" ${currentStatus === s ? 'selected' : ''}>${s}</option>`
     ).join('');
 
-    // Налаштування міток прогресу залежно від типу медіа
     let progressLabel = 'Current Page (max 999)';
     let progressMax = 999;
 
@@ -249,7 +237,6 @@ function toggleFields(status, tab) {
     if (ratingField) ratingField.style.display = isFinished ? 'block' : 'none';
     if (seasonField) seasonField.style.display = (isWatching && (tab === 'series' || tab === 'anime')) ? 'block' : 'none';
 
-    // Динамічно змінюємо текст лейблу при зміні статусів у відкритому модальному вікні
     if (labelField) {
         if (tab === 'movie') labelField.textContent = 'Time Stopped (Total Minutes):';
         else if (tab === 'series' || tab === 'anime') labelField.textContent = 'Current Episode:';
