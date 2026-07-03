@@ -1,3 +1,5 @@
+import random
+from flask import session
 import os
 import re
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
@@ -163,7 +165,7 @@ def is_password_too_simple(password):
     if not os.path.exists(file_path):
         return False
 
-    with open(file_path, 'r') as f:
+    with open("common_passwords.txt", encoding="utf-8") as f:
         common_passwords = [line.strip() for line in f.readlines()]
 
     return password in common_passwords
@@ -181,48 +183,68 @@ def api_register():
 
         gmail_pattern = r'^[a-z0-9._%+-]+@gmail\.com$'
         if not re.match(gmail_pattern, email):
-            return jsonify({
-                'success': False,
-                'message': 'Only valid @gmail.com addresses are allowed!'
-            }), 400
+            return jsonify({'success': False, 'message': 'Only valid @gmail.com addresses are allowed!'}), 400
 
         if User.query.filter_by(username=username).first():
-            return jsonify({
-                'success': False,
-                'message': f'Username "{username}" is already taken. Please choose another one.'
-            }), 400
+            return jsonify({'success': False, 'message': f'Username "{username}" is already taken.'}), 400
 
         if User.query.filter_by(email=email).first():
             return jsonify({'success': False, 'message': 'This email is already registered.'}), 400
 
-        if len(password) < 8:
-            return jsonify({'success': False, 'message': 'Password must be at least 8 characters.'}), 400
-
-        if not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[a-z])', password):
-            return jsonify({
-                'success': False,
-                'message': 'Password must contain at least one uppercase letter, one lowercase letter, and one digit.'
-            }), 400
+        if len(password) < 8 or not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[a-z])', password):
+            return jsonify({'success': False, 'message': 'Password does not meet security requirements.'}), 400
 
         if is_password_too_simple(password):
-            return jsonify({
-                'success': False,
-                'message': 'This password is too simple (common). Please try a more complex one.'
-            }), 400
+            return jsonify({'success': False, 'message': 'This password is too simple.'}), 400
 
         if password != confirm:
             return jsonify({'success': False, 'message': 'Passwords do not match.'}), 400
 
-        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, email=email, password=hashed_pw)
+        verification_code = str(random.randint(100000, 999999))
+
+        session['temp_user_data'] = {
+            'username': username,
+            'email': email,
+            'password': generate_password_hash(password, method='pbkdf2:sha256')
+        }
+        session['verification_code'] = verification_code
+
+        print(f"\n[MAIL SIMULATOR] To: {email} | Your verification code is: {verification_code}\n")
+        app.logger.info(f"Verification code sent to {email}: {verification_code}")
+
+        return jsonify({'success': True, 'action': 'requires_verification'})
+
+    return render_template('register.html')
+
+
+@app.route('/api/auth/verify-code', methods=['POST'])
+def verify_code():
+    data = request.get_json()
+    user_code = data.get('code', '').strip()
+
+    saved_code = session.get('verification_code')
+    temp_data = session.get('temp_user_data')
+
+    if not saved_code or not temp_data:
+        return jsonify({'success': False, 'message': 'Session expired. Please try registering again.'}), 400
+
+    if user_code == saved_code:
+        new_user = User(
+            username=temp_data['username'],
+            email=temp_data['email'],
+            password=temp_data['password']
+        )
         db.session.add(new_user)
         db.session.commit()
 
         login_user(new_user)
-        return jsonify({'success': True})
 
-    return render_template('register.html')
+        session.pop('verification_code', None)
+        session.pop('temp_user_data', None)
 
+        return jsonify({'success': True, 'message': 'Correct verification code! Welcome.'})
+    else:
+        return jsonify({'success': False, 'message': 'Invalid verification code. Please try again.'}), 400
 
 @app.route('/api/auth/logout')
 def api_logout():

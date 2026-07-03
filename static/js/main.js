@@ -33,8 +33,14 @@ function updateAddForm(tab) {
     };
 
     const l = labels[tab] || labels.book;
-    if (titleInput) titleInput.placeholder = l.title;
-    if (authorInput) authorInput.placeholder = l.author;
+    if (titleInput) {
+        titleInput.placeholder = l.title;
+        titleInput.maxLength = 40;
+    }
+    if (authorInput) {
+        authorInput.placeholder = l.author;
+        authorInput.maxLength = 40;
+    }
     if (mainHeader) mainHeader.textContent = l.header;
 }
 
@@ -159,8 +165,8 @@ async function openBookDetails(id) {
         `<option value="${s}" ${currentStatus === s ? 'selected' : ''}>${s}</option>`
     ).join('');
 
-    let progressLabel = 'Current Page (max 999)';
-    let progressMax = 999;
+    let progressLabel = 'Current Page (max 2000)';
+    let progressMax = 2000;
 
     if (tab === 'series' || tab === 'anime') {
         progressLabel = 'Current Episode';
@@ -181,8 +187,8 @@ async function openBookDetails(id) {
         <label>Cover Image URL:</label>
         <input type="text" id="edit-image" value="${book.image_url || ''}" placeholder="http://...">
         
-        <label>Description / Notes:</label>
-        <textarea id="edit-desc" rows="4">${book.description || ''}</textarea>
+        <label>Description / Notes (max 400 chars):</label>
+        <textarea id="edit-desc" rows="4" maxlength="400">${book.description || ''}</textarea>
         
         <label>Status:</label>
         <select id="edit-status" onchange="toggleFields(this.value, '${tab}')">
@@ -240,7 +246,7 @@ function toggleFields(status, tab) {
     if (labelField) {
         if (tab === 'movie') labelField.textContent = 'Time Stopped (Total Minutes):';
         else if (tab === 'series' || tab === 'anime') labelField.textContent = 'Current Episode:';
-        else labelField.textContent = 'Current Page (max 999):';
+        else labelField.textContent = 'Current Page (max 2000):';
     }
 }
 
@@ -356,7 +362,6 @@ async function addBook() {
         alert("Please enter a title!");
         return;
     }
-
     try {
         const response = await fetch('/api/books', {
             method: 'POST',
