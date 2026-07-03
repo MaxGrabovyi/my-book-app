@@ -17,6 +17,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import logging
 from logging.handlers import RotatingFileHandler
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
@@ -32,6 +33,19 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax',
 )
 
+# =====================================================================
+# 🔐 НАЛАШТУВАННЯ НАДСИЛАННЯ ЛИСТІВ ЧЕРЕЗ GMAIL СЕРВЕР
+# =====================================================================
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'maxgrabovi000@gmail.com'          # 👈 Впиши сюди свій Gmail
+app.config['MAIL_PASSWORD'] = 'fqgu fvyt anos xfmj'            # 👈 Впиши сюди 16-символьний Hasła do aplikacji
+app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
+
+mail = Mail(app)
+
 handler = RotatingFileHandler('security.log', maxBytes=10000, backupCount=3)
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter(
@@ -40,17 +54,15 @@ formatter = logging.Formatter(
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
-
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'api_login'
-
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
     books = db.relationship('Book', backref='owner', lazy=True)
     is_admin = db.Column(db.Boolean, default=False)
     last_seen = db.Column(db.DateTime, default=db.func.now())
@@ -181,27 +193,34 @@ def api_register():
         password = data.get('password', '')
         confirm = data.get('confirm_password', '')
 
-        gmail_pattern = r'^[a-z0-9._%+-]+@gmail\.com$'
-        if not re.match(gmail_pattern, email):
-            return jsonify({'success': False, 'message': 'Only valid @gmail.com addresses are allowed!'}), 400
-
-        if User.query.filter_by(username=username).first():
-            return jsonify({'success': False, 'message': f'Username "{username}" is already taken.'}), 400
-
-        if User.query.filter_by(email=email).first():
-            return jsonify({'success': False, 'message': 'This email is already registered.'}), 400
-
-        if len(password) < 8 or not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[a-z])', password):
-            return jsonify({'success': False, 'message': 'Password does not meet security requirements.'}), 400
-
-        if is_password_too_simple(password):
-            return jsonify({'success': False, 'message': 'This password is too simple.'}), 400
+        if not username or not email or not password:
+            return jsonify({'success': False, 'message': 'All fields are required.'}), 400
 
         if password != confirm:
             return jsonify({'success': False, 'message': 'Passwords do not match.'}), 400
 
+        if not email.endswith('@gmail.com'):
+            return jsonify({'success': False, 'message': 'Only valid @gmail.com addresses are allowed!'}), 400
+
+        # 🔍 ВАЛІДАЦІЯ USERNAME ТА EMAIL НА УНІКАЛЬНІСТЬ В БД
+        # Перевіряємо, чи вже існує користувач з таким самим ім'ям або поштою
+        # (Припустимо, що твоя модель називається User, а поля: username та email)
+        try:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                return jsonify({'success': False, 'message': 'This username is already taken. Try another one.'}), 400
+
+            existing_email = User.query.filter_by(email=email).first()
+            if existing_email:
+                return jsonify({'success': False, 'message': 'An account with this email already exists.'}), 400
+        except Exception as e:
+            # Якщо виникне помилка з БД (наприклад, модель ще не налаштована), залогуємо її
+            app.logger.error(f"DB Check error: {str(e)}")
+
+        # Якщо перевірки пройшли успішно -> генеруємо 6-значний код
         verification_code = str(random.randint(100000, 999999))
 
+        # Тимчасово зберігаємо пароль (вже захешований!) в сесії до моменту вводу коду
         session['temp_user_data'] = {
             'username': username,
             'email': email,
@@ -209,14 +228,36 @@ def api_register():
         }
         session['verification_code'] = verification_code
 
-        print(f"\n[MAIL SIMULATOR] To: {email} | Your verification code is: {verification_code}\n")
-        app.logger.info(f"Verification code sent to {email}: {verification_code}")
+        # Спроба надіслати реальний лист на пошту
+        try:
+            msg = Message(
+                subject="Confirm your registration at Secure Library",
+                recipients=[email]
+            )
+            msg.body = (
+                f"Hello {username},\n\n"
+                f"Thank you for creating an account with Secure Library Application.\n"
+                f"To complete your registration and verify your email address, please use the following 6-digit security verification code:\n\n"
+                f"Verification Code: {verification_code}\n\n"
+                f"Best regards,\n"
+                f"Secure Library Support Team"
+            )
 
-        return jsonify({'success': True, 'action': 'requires_verification'})
+            mail.send(msg)
+            app.logger.info(f"Verification email successfully sent to {email}")
+            return jsonify({'success': True, 'action': 'requires_verification'})
+
+        except Exception as e:
+            app.logger.error(f"Failed to send email to {email}: {str(e)}")
+            return jsonify(
+                {'success': False, 'message': 'Failed to send verification email. Check configuration.'}), 500
 
     return render_template('register.html')
 
 
+# =====================================================================
+# 2. ЕНДПОІНТ ВЕРИФІКАЦІЇ: СТВОРЕННЯ ЮЗЕРА ТА МИТТЄВИЙ ВХІД (LOGIN)
+# =====================================================================
 @app.route('/api/auth/verify-code', methods=['POST'])
 def verify_code():
     data = request.get_json()
@@ -226,26 +267,40 @@ def verify_code():
     temp_data = session.get('temp_user_data')
 
     if not saved_code or not temp_data:
-        return jsonify({'success': False, 'message': 'Session expired. Please try registering again.'}), 400
+        return jsonify({'success': False, 'message': 'Session expired. Please register again.'}), 400
 
     if user_code == saved_code:
-        new_user = User(
-            username=temp_data['username'],
-            email=temp_data['email'],
-            password=temp_data['password']
-        )
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            # 🌟 1. Створюємо реального користувача з тимчасових даних сесії
+            new_user = User(
+                username=temp_data['username'],
+                email=temp_data['email'],
+                password=temp_data['password']  # Пароль уже захешований
+            )
 
-        login_user(new_user)
+            # 🌟 2. Записуємо його в базу даних SQLite
+            db.session.add(new_user)
+            db.session.commit()
 
-        session.pop('verification_code', None)
-        session.pop('temp_user_data', None)
+            # 🌟 3. МИТТЄВА АВТОРИЗАЦІЯ (Автоматичний логін за допомогою Flask-Login)
+            # Після цієї команди current_user стане активним, і користувач буде залогований
+            login_user(new_user)
 
-        return jsonify({'success': True, 'message': 'Correct verification code! Welcome.'})
+            app.logger.info(f"User {new_user.username} successfully registered and logged in.")
+
+            # Очищуємо тимчасові дані з сесії, бо вони більше не потрібні
+            session.pop('verification_code', None)
+            session.pop('temp_user_data', None)
+
+            # Повертаємо повідомлення про успіх (фронтенд автоматично перенаправить на головну '/')
+            return jsonify({'success': True, 'message': 'Correct verification code! Welcome.'})
+
+        except Exception as db_err:
+            db.session.rollback()  # Відкочуємо зміни у разі збою
+            app.logger.error(f"Database error during user creation: {str(db_err)}")
+            return jsonify({'success': False, 'message': 'Database error occurred while creating your account.'}), 500
     else:
         return jsonify({'success': False, 'message': 'Invalid verification code. Please try again.'}), 400
-
 @app.route('/api/auth/logout')
 def api_logout():
     logout_user()
