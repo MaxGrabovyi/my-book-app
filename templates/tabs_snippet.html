@@ -1,0 +1,64 @@
+<!-- ═══════════════════════════════════════════════════════
+     Вставити цей блок у index.html — прямо перед секцією
+     з формою додавання (#add-form або аналогом).
+     Також додай CSS нижче у свій <style> або .css файл.
+     ═══════════════════════════════════════════════════════ -->
+
+<!-- Media tabs -->
+<div class="media-tabs-bar">
+    <button class="media-tab active" data-tab="book"   onclick="switchTab('book')">📚 Books</button>
+    <button class="media-tab"        data-tab="movie"  onclick="switchTab('movie')">🎬 Movies</button>
+    <button class="media-tab"        data-tab="series" onclick="switchTab('series')">📺 Series</button>
+    <button class="media-tab"        data-tab="anime"  onclick="switchTab('anime')">🌸 Anime</button>
+</div>
+
+<!-- Add-item form (лейбли оновлюються автоматично через JS) -->
+<div id="add-form">
+    <label id="title-label" for="book-title">Title</label>
+    <input type="text" id="book-title" placeholder="Title">
+
+    <label id="author-label" for="book-author">Author</label>
+    <input type="text" id="book-author" placeholder="Author">
+
+    <button onclick="addBook()">Add</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     CSS — вставити у свій <style> або окремий .css файл
+     ═══════════════════════════════════════════════════════ -->
+<style>
+/* Tab bar */
+.media-tabs-bar {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px 0;
+    border-bottom: 2px solid #e0e0e0;
+    flex-wrap: wrap;               /* OK on mobile */
+}
+
+.media-tab {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    background: #f0f0f0;
+    color: #555;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;           /* overlap the bar border */
+}
+
+.media-tab:hover {
+    background: #e0e0e0;
+    color: #222;
+}
+
+.media-tab.active {
+    background: #fff;
+    color: #6c63ff;                /* match your accent color */
+    border-color: #6c63ff;
+}
+</style>
