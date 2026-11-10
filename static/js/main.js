@@ -6,12 +6,16 @@ let currentCollectionData = []; // Глобальний масив для збе
 function switchTab(tab) {
     currentTab = tab;
 
+<<<<<<< HEAD
     // 1. Очищаємо пошук у колекції
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     const searchInput = document.getElementById('search-input');
     const statusFilter = document.getElementById('status-filter');
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = 'all';
 
+<<<<<<< HEAD
     // 2. Очищаємо інпути форми додавання та ховаємо випадаючі підказки
     const titleInput = document.getElementById('book-title');
     const authorInput = document.getElementById('book-author');
@@ -22,12 +26,19 @@ function switchTab(tab) {
     if (dropdown) dropdown.style.display = 'none';
 
     // 3. Оновлюємо активний клас для кнопок вкладок
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     document.querySelectorAll('.media-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
     });
 
+<<<<<<< HEAD
     // 4. Змінюємо плейсхолдери та завантажуємо список елементів
     updateAddForm(tab);
+=======
+    updateAddForm(tab);
+
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     loadBooks();
 }
 
@@ -46,11 +57,19 @@ function updateAddForm(tab) {
     const l = labels[tab] || labels.book;
     if (titleInput) {
         titleInput.placeholder = l.title;
+<<<<<<< HEAD
         titleInput.maxLength = 200; // Збільшено до 200
     }
     if (authorInput) {
         authorInput.placeholder = l.author;
         authorInput.maxLength = 200; // Збільшено до 200
+=======
+        titleInput.maxLength = 40;
+    }
+    if (authorInput) {
+        authorInput.placeholder = l.author;
+        authorInput.maxLength = 40;
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     }
     if (mainHeader) mainHeader.textContent = l.header;
 }
@@ -295,7 +314,11 @@ async function updateStatus(id, newStatus) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({status: newStatus})
         });
+<<<<<<< HEAD
         if (response.status === 401) redirectToLogin();
+=======
+        if (response.status === 401) window.location.href = '/api/auth/login';
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     } catch (error) {
         console.error("Update error:", error);
     }
@@ -360,29 +383,42 @@ function showFlashMessage(text, type) {
         setTimeout(() => alertDiv.remove(), 500);
     }, 3000);
 }
+<<<<<<< HEAD
 // 🟢 Redirect to login ----------------------------------------------------------
 function redirectToLogin() {
     const next = encodeURIComponent(window.location.pathname + window.location.search);
     window.location.href = `/api/auth/login?next=${next}`;
 }
+=======
+
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 // 🟢 Add item -------------------------------------------------------------------
 async function addBook() {
     const titleEl = document.getElementById('book-title');
     const authorEl = document.getElementById('book-author');
+<<<<<<< HEAD
     const dropdown = document.getElementById('custom-suggestions');
 
     if (!titleEl) return;
 
     const title = titleEl.value.trim();
     const author = authorEl ? authorEl.value.trim() : '';
+=======
+
+    const title = titleEl.value.trim();
+    const author = authorEl.value.trim();
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 
     if (!title) {
         alert("Please enter a title!");
         return;
     }
+<<<<<<< HEAD
 
     if (dropdown) dropdown.style.display = 'none';
 
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     try {
         const response = await fetch('/api/books', {
             method: 'POST',
@@ -390,22 +426,31 @@ async function addBook() {
             body: JSON.stringify({
                 title: title,
                 author: author,
+<<<<<<< HEAD
                 media_type: currentTab
+=======
+                media_type: currentTab,   // send current tab as media_type
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
             })
         });
 
         if (response.status === 401) {
+<<<<<<< HEAD
             sessionStorage.setItem('pendingBook', JSON.stringify({
                 title: title,
                 author: author,
                 media_type: currentTab
             }));
             redirectToLogin();
+=======
+            window.location.href = '/api/auth/register';
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
             return;
         }
 
         if (response.ok) {
             titleEl.value = '';
+<<<<<<< HEAD
             if (authorEl) authorEl.value = '';
             loadBooks();
         } else {
@@ -456,11 +501,22 @@ async function processPendingBook(pending) {
         }
     } catch (error) {
         console.error("Pending item error:", error);
+=======
+            authorEl.value = '';
+            loadBooks();
+        } else {
+            const errorData = await response.json();
+            alert("Error: " + errorData.error);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     }
 }
 
 // 🟢 Init -----------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
+<<<<<<< HEAD
     // Якщо є відкладена книга, відкриваємо її вкладку, інакше стандартну
     const pending = readPendingBook();
     switchTab(pending ? pending.media_type : 'book');
@@ -531,4 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dropdown.style.display = 'none';
         }
     });
+=======
+    switchTab('book');
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 });

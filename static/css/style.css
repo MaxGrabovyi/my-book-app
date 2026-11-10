@@ -53,6 +53,7 @@ nav {
     color: var(--primary);
 }
 
+<<<<<<< HEAD
 .nav-links a[href="/admin/users"] {
     border: 1px solid #00d2d3;
     padding: 5px 10px;
@@ -65,13 +66,18 @@ nav {
     color: #fff !important;
 }
 
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
+<<<<<<< HEAD
 /* Форми та авторизація */
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .auth-wrapper {
     display: flex;
     justify-content: center;
@@ -139,6 +145,7 @@ input:focus {
     background-color: var(--primary-hover);
 }
 
+<<<<<<< HEAD
 .auth-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -156,10 +163,17 @@ input:focus {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 30px;
+=======
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 70px;
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     padding: 20px 0;
 }
 
 .book-card {
+<<<<<<< HEAD
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
@@ -209,6 +223,26 @@ input:focus {
     margin: 0 0 0.5rem 0;
     font-size: 1.15rem;
     color: #2d3436;
+=======
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.book-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 }
 
 .book-card p {
@@ -216,11 +250,15 @@ input:focus {
     margin: 0.25rem 0;
 }
 
+<<<<<<< HEAD
 /* Статуси */
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .status-container {
     margin: 1rem 0;
 }
 
+<<<<<<< HEAD
 .status-row {
     display: flex;
     justify-content: space-between;
@@ -250,6 +288,11 @@ select.status-finished { border-left: 4px solid #10b981; }
     border-radius: 4px;
 }
 
+=======
+select.status-reading { border-left: 4px solid #f59e0b; }
+select.status-finished { border-left: 4px solid #10b981; }
+
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .delete-btn {
     background-color: #fee2e2;
     color: var(--danger);
@@ -267,14 +310,24 @@ select.status-finished { border-left: 4px solid #10b981; }
     color: white;
 }
 
+<<<<<<< HEAD
 /* Модальні вікна */
 #confirm-modal, .modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
+=======
+#confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
+<<<<<<< HEAD
     z-index: 1000;
 }
 
@@ -292,6 +345,10 @@ select.status-finished { border-left: 4px solid #10b981; }
 
 .save-btn { background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
 
+=======
+}
+
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .alert-box, .alert-error {
     background-color: #ff7675;
     color: white;
@@ -303,7 +360,10 @@ select.status-finished { border-left: 4px solid #10b981; }
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     animation: slideDown 0.4s ease-out;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 @keyframes slideDown {
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
@@ -335,6 +395,105 @@ select.status-finished { border-left: 4px solid #10b981; }
     margin-top: 15px;
 }
 
+<<<<<<< HEAD
+=======
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
+}
+.modal-content {
+    background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px;
+    position: relative; max-height: 80vh; overflow-y: auto;
+}
+.close-btn { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; }
+.modal-content label { display: block; margin-top: 15px; font-weight: bold; }
+.modal-content input, .modal-content textarea, .modal-content select {
+    width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;
+}
+.save-btn { background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.85em;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-in-plan { background-color: #6c757d; } /* Сірий */
+.status-reading { background-color: #007bff; } /* Синій */
+.status-finished { background-color: #28a745; } /* Зелений */
+
+.info-line {
+    color: #444;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.card-img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+.no-img {
+    height: 350px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-content h3 {
+    margin: 0 0 2px 0;
+    font-size: 1.2rem;
+    color: #2d3436;
+}
+
+.nav-links a[href="/admin/users"] {
+    border: 1px solid #00d2d3;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.nav-links a[href="/admin/users"]:hover {
+    background: #00d2d3;
+    color: #fff !important;
+}
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 .lockout-msg {
     background: #fab1a0;
     border-left: 5px solid #d63031;
@@ -348,8 +507,14 @@ select.status-finished { border-left: 4px solid #10b981; }
     gap: 10px;
 }
 
+<<<<<<< HEAD
 .lockout-modal {
     display: none;
+=======
+/* Стиль для модального вікна блокування */
+.lockout-modal {
+    display: none; /* Спочатку приховано */
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.7);
@@ -365,14 +530,38 @@ select.status-finished { border-left: 4px solid #10b981; }
     border-radius: 20px;
     max-width: 400px;
     text-align: center;
+<<<<<<< HEAD
     border-bottom: 8px solid #ff7675;
+=======
+    border-bottom: 8px solid #ff7675; /* Червона лінія знизу */
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     animation: slideIn 0.4s ease-out;
 }
 
+<<<<<<< HEAD
 .lockout-icon { font-size: 50px; margin-bottom: 15px; }
 .lockout-title { color: #2d3436; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
 .lockout-text { color: #636e72; line-height: 1.6; margin-bottom: 20px; }
+=======
+.lockout-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.lockout-title {
+    color: #2d3436;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.lockout-text {
+    color: #636e72;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 
 .lockout-btn {
     background: #ff7675;
@@ -385,12 +574,19 @@ select.status-finished { border-left: 4px solid #10b981; }
     transition: 0.3s;
 }
 
+<<<<<<< HEAD
 .lockout-btn:hover { background: #d63031; }
+=======
+.lockout-btn:hover {
+    background: #d63031;
+}
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 
 @keyframes slideIn {
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+<<<<<<< HEAD
 
 /* Підказки пошуку */
 .suggestions-dropdown {
@@ -464,3 +660,5 @@ select.status-finished { border-left: 4px solid #10b981; }
 
 .auth-btn-primary { background: #4f46e5; color: #fff; }
 .auth-btn-secondary { background: #e5e7eb; color: #222; }
+=======
+>>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
