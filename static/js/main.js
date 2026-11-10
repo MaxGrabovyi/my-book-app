@@ -1,21 +1,18 @@
 // 🟢 State ---------------------------------------------------------------------
 let currentTab = 'book'; // 'book' | 'movie' | 'series' | 'anime'
 let currentCollectionData = []; // Глобальний масив для збереження поточної вкладки медіа
+let debounceTimer = null;
 
 // 🟢 Tab switching --------------------------------------------------------------
 function switchTab(tab) {
     currentTab = tab;
 
-<<<<<<< HEAD
     // 1. Очищаємо пошук у колекції
-=======
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     const searchInput = document.getElementById('search-input');
     const statusFilter = document.getElementById('status-filter');
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = 'all';
 
-<<<<<<< HEAD
     // 2. Очищаємо інпути форми додавання та ховаємо випадаючі підказки
     const titleInput = document.getElementById('book-title');
     const authorInput = document.getElementById('book-author');
@@ -26,19 +23,12 @@ function switchTab(tab) {
     if (dropdown) dropdown.style.display = 'none';
 
     // 3. Оновлюємо активний клас для кнопок вкладок
-=======
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     document.querySelectorAll('.media-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
     });
 
-<<<<<<< HEAD
     // 4. Змінюємо плейсхолдери та завантажуємо список елементів
     updateAddForm(tab);
-=======
-    updateAddForm(tab);
-
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     loadBooks();
 }
 
@@ -57,19 +47,11 @@ function updateAddForm(tab) {
     const l = labels[tab] || labels.book;
     if (titleInput) {
         titleInput.placeholder = l.title;
-<<<<<<< HEAD
-        titleInput.maxLength = 200; // Збільшено до 200
+        titleInput.maxLength = 200;
     }
     if (authorInput) {
         authorInput.placeholder = l.author;
-        authorInput.maxLength = 200; // Збільшено до 200
-=======
-        titleInput.maxLength = 40;
-    }
-    if (authorInput) {
-        authorInput.placeholder = l.author;
-        authorInput.maxLength = 40;
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
+        authorInput.maxLength = 200;
     }
     if (mainHeader) mainHeader.textContent = l.header;
 }
@@ -160,18 +142,18 @@ function filterCollection() {
         const currentBadgeColor = statusColors[statusClass] || '#007bff';
 
         card.innerHTML = `
-    ${book.image_url ? `<img src="${book.image_url}" class="card-img">` : '<div class="no-img">No Cover</div>'}
-    <div class="card-content">
-        <h3>${book.title}</h3>
-        <p class="author">${book.author}</p>
-        <div class="status-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%;">
-            <span class="status-badge status-${statusClass}" style="background-color: ${currentBadgeColor}; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
-                ${book.status}
-            </span>
-            <div class="extra-info-container">${extraInfo}</div>
-        </div>
-    </div>
-`;
+            ${book.image_url ? `<img src="${book.image_url}" class="card-img">` : '<div class="no-img">No Cover</div>'}
+            <div class="card-content">
+                <h3>${book.title}</h3>
+                <p class="author">${book.author}</p>
+                <div class="status-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%;">
+                    <span class="status-badge status-${statusClass}" style="background-color: ${currentBadgeColor}; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; display: inline-block;">
+                        ${book.status}
+                    </span>
+                    <div class="extra-info-container">${extraInfo}</div>
+                </div>
+            </div>
+        `;
         list.appendChild(card);
     });
 }
@@ -314,11 +296,9 @@ async function updateStatus(id, newStatus) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({status: newStatus})
         });
-<<<<<<< HEAD
-        if (response.status === 401) redirectToLogin();
-=======
-        if (response.status === 401) window.location.href = '/api/auth/login';
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
+        if (response.status === 401) {
+            redirectToLogin();
+        }
     } catch (error) {
         console.error("Update error:", error);
     }
@@ -362,10 +342,11 @@ function closeConfirm() {
 // 🟢 Flash message --------------------------------------------------------------
 function showFlashMessage(text, type) {
     const container = document.getElementById('alert-container');
+    if (!container) return;
     const alertDiv = document.createElement('div');
 
     alertDiv.style.cssText = `
-        background-color: #ff7675; 
+        background-color: ${type === 'error' ? '#ff7675' : '#2ecc71'}; 
         color: white; 
         padding: 15px; 
         border-radius: 8px; 
@@ -383,42 +364,31 @@ function showFlashMessage(text, type) {
         setTimeout(() => alertDiv.remove(), 500);
     }, 3000);
 }
-<<<<<<< HEAD
+
 // 🟢 Redirect to login ----------------------------------------------------------
 function redirectToLogin() {
     const next = encodeURIComponent(window.location.pathname + window.location.search);
     window.location.href = `/api/auth/login?next=${next}`;
 }
-=======
 
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 // 🟢 Add item -------------------------------------------------------------------
 async function addBook() {
     const titleEl = document.getElementById('book-title');
     const authorEl = document.getElementById('book-author');
-<<<<<<< HEAD
     const dropdown = document.getElementById('custom-suggestions');
 
     if (!titleEl) return;
 
     const title = titleEl.value.trim();
     const author = authorEl ? authorEl.value.trim() : '';
-=======
-
-    const title = titleEl.value.trim();
-    const author = authorEl.value.trim();
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 
     if (!title) {
         alert("Please enter a title!");
         return;
     }
-<<<<<<< HEAD
 
     if (dropdown) dropdown.style.display = 'none';
 
-=======
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     try {
         const response = await fetch('/api/books', {
             method: 'POST',
@@ -426,31 +396,22 @@ async function addBook() {
             body: JSON.stringify({
                 title: title,
                 author: author,
-<<<<<<< HEAD
                 media_type: currentTab
-=======
-                media_type: currentTab,   // send current tab as media_type
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
             })
         });
 
         if (response.status === 401) {
-<<<<<<< HEAD
             sessionStorage.setItem('pendingBook', JSON.stringify({
                 title: title,
                 author: author,
                 media_type: currentTab
             }));
             redirectToLogin();
-=======
-            window.location.href = '/api/auth/register';
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
             return;
         }
 
         if (response.ok) {
             titleEl.value = '';
-<<<<<<< HEAD
             if (authorEl) authorEl.value = '';
             loadBooks();
         } else {
@@ -462,6 +423,7 @@ async function addBook() {
         alert("Network error. Please try again.");
     }
 }
+
 // 🟢 Pending item (додається після логіну) --------------------------------------
 function readPendingBook() {
     const raw = sessionStorage.getItem('pendingBook');
@@ -477,12 +439,10 @@ function readPendingBook() {
 }
 
 async function processPendingBook(pending) {
-    // Одразу видаляємо, щоб книга не додалась двічі
     sessionStorage.removeItem('pendingBook');
     if (!pending) return;
 
     try {
-        // Перевіряємо, чи користувач справді залогінився
         const statusRes = await fetch('/api/auth/status');
         const status = await statusRes.json();
         if (!status.logged_in) return;
@@ -501,23 +461,11 @@ async function processPendingBook(pending) {
         }
     } catch (error) {
         console.error("Pending item error:", error);
-=======
-            authorEl.value = '';
-            loadBooks();
-        } else {
-            const errorData = await response.json();
-            alert("Error: " + errorData.error);
-        }
-    } catch (error) {
-        console.error("Network error:", error);
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     }
 }
 
 // 🟢 Init -----------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-<<<<<<< HEAD
-    // Якщо є відкладена книга, відкриваємо її вкладку, інакше стандартну
     const pending = readPendingBook();
     switchTab(pending ? pending.media_type : 'book');
     processPendingBook(pending);
@@ -528,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!titleInput || !dropdown) return;
 
-    // Відстежуємо введення в поле назви
+    // Відстежуємо введення в поле назви для пошукових підказок
     titleInput.addEventListener('input', function() {
         const query = this.value.trim();
 
@@ -561,7 +509,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div style="font-size: 0.8rem; color: #718096; margin-top: 2px;">${item.author ? item.author : ''}</div>
                     `;
 
-                    // mousedown миттєво підставляє дані до втрати фокусу
                     div.onmousedown = function(e) {
                         e.preventDefault();
                         titleInput.value = item.title;
@@ -587,7 +534,4 @@ document.addEventListener("DOMContentLoaded", () => {
             dropdown.style.display = 'none';
         }
     });
-=======
-    switchTab('book');
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 });

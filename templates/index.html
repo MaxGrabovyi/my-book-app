@@ -9,24 +9,10 @@
     </div>
 
     <h2 id="form-main-header">Add a New Book</h2>
-<<<<<<< HEAD
-
-    <!-- Форма з кастомним випадаючим списком -->
-    <div class="add-book-form" style="position: relative;">
-        <div style="position: relative; flex: 1;">
-            <input type="text" id="book-title" placeholder="Book Title" autocomplete="off" required>
-            <!-- Кастомний список підказок -->
-            <div id="custom-suggestions" class="suggestions-dropdown"></div>
-        </div>
-
-        <input type="text" id="book-author" placeholder="Author Name">
-        <button type="button" id="add-btn" onclick="addBook()">Add to Library</button>
-=======
     <div class="add-book-form">
         <input type="text" id="book-title" placeholder="Book Title" required>
         <input type="text" id="book-author" placeholder="Author Name">
         <button id="add-btn" onclick="addBook()">Add to Library</button>
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     </div>
 
     <hr>
@@ -67,57 +53,7 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-
 <style>
-    .suggestions-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        max-height: 250px;
-        overflow-y: auto;
-        display: none;
-        margin-top: 5px;
-    }
-
-    .suggestion-item {
-        padding: 10px 14px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid #f1f5f9;
-        transition: background 0.15s ease;
-    }
-
-    .suggestion-item:last-child {
-        border-bottom: none;
-    }
-
-    .suggestion-item:hover {
-        background: #f4f3ff; /* Легкий фіолетовий відтінок */
-    }
-
-    .suggestion-title {
-        font-weight: 600;
-        color: #1e293b;
-        font-size: 0.95rem;
-    }
-
-    .suggestion-author {
-        font-size: 0.8rem;
-        color: #6366f1; /* Ваша фіолетова палітра */
-        margin-top: 2px;
-    }
-
-=======
-<style>
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
     .media-tabs-bar {
         display: flex;
         gap: 6px;
@@ -170,73 +106,4 @@
         display: none;
     }
 </style>
-<<<<<<< HEAD
-
-
-<script>
-let activeCategory = 'book';
-let debounceTimer;
-
-// Швидкий пошук із затримкою друку (Debounce)
-document.getElementById('book-title').addEventListener('input', function() {
-    const query = this.value.trim();
-    const dropdown = document.getElementById('custom-suggestions');
-    const authorInput = document.getElementById('book-author');
-
-    clearTimeout(debounceTimer);
-
-    if (query.length < 3) {
-        dropdown.style.display = 'none';
-        return;
-    }
-
-    // Затримка 250мс для уникнення зайвих запитів
-    debounceTimer = setTimeout(async () => {
-        try {
-            const response = await fetch(`/api/search-suggestions?q=${encodeURIComponent(query)}&category=${activeCategory}`);
-            const items = await response.json();
-
-            dropdown.innerHTML = '';
-
-            if (items.length === 0) {
-                dropdown.style.display = 'none';
-                return;
-            }
-
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.innerHTML = `
-                    <span class="suggestion-title">${item.title}</span>
-                    <span class="suggestion-author">${item.author ? 'By: ' + item.author : ''}</span>
-                `;
-
-                // Вибір підказки кліком
-                div.onclick = function() {
-                    document.getElementById('book-title').value = item.title;
-                    if (item.author) authorInput.value = item.author;
-                    dropdown.style.display = 'none';
-                };
-
-                dropdown.appendChild(div);
-            });
-
-            dropdown.style.display = 'block';
-        } catch (e) {
-            console.error('Search error:', e);
-        }
-    }, 250);
-});
-
-// Закриття списку при кліку за межами поля
-document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('custom-suggestions');
-    const input = document.getElementById('book-title');
-    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-    }
-});
-</script>
-=======
->>>>>>> 74dd6b94d98b410f1538a1d0eb4261ef00f8abb6
 {% endblock %}
